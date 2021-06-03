@@ -27,3 +27,9 @@ Run tests with Docker Compose:
 ```
 docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
 ```
+
+## Import Data
+To import data, run
+```
+docker-compose run --rm app make
+```
