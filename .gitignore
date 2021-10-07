@@ -107,3 +107,5 @@ venv.bak/
 node_modules/
 walk_to_mcd/static/compressor/*
 !walk_to_mcd/static/js/lib/
+
+database

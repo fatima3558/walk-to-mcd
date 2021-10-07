@@ -1,4 +1,4 @@
-# Can I walk to McDonald's?
+# Can I walk to ~~McDonald's~~ Starbucks?
 
 ## Developing
 
@@ -17,16 +17,7 @@ Run the app:
 docker-compose up
 ```
 
-The app will be available at http://localhost:8000. The database will be exposed
-on port 32001.
-
-### Running tests
-
-Run tests with Docker Compose:
-
-```
-docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
-```
+The database will be exposed on port 32001.
 
 ## Import Data
 To import data, run
