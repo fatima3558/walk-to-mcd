@@ -109,3 +109,5 @@ walk_to_mcd/static/compressor/*
 !walk_to_mcd/static/js/lib/
 
 database
+load_chicago
+load_starbucks
