@@ -25,7 +25,7 @@ To import data, run
 docker-compose run --rm app make prepped_db
 ```
 
-To run the whole ETL pipeline and the queries needed to calculate how much of Chicago is within 2 miles of a Starbucks, run
+To then run the query needed to calculate how much of Chicago is within 2 miles of a Starbucks, run
 ```
 docker-compose run --rm app make calculation
 ```
