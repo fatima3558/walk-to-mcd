@@ -1,29 +1,11 @@
-# Can I walk to McDonald's?
-
-## Developing
-
-Development requires a local installation of [Docker](https://docs.docker.com/install/)
-and [Docker Compose](https://docs.docker.com/compose/install/).
-
-Build application containers:
-
+# Can I walk to ~~McDonald's~~ Starbucks?
+## Import Data
+To import data, run
 ```
-docker-compose build
+make prepped_db
 ```
 
-Run the app:
-
+To then run the query needed to calculate how much of Chicago is within 2 miles of a Starbucks, run
 ```
-docker-compose up
-```
-
-The app will be available at http://localhost:8000. The database will be exposed
-on port 32001.
-
-### Running tests
-
-Run tests with Docker Compose:
-
-```
-docker-compose -f docker-compose.yml -f tests/docker-compose.yml run --rm app
+make calculation
 ```
