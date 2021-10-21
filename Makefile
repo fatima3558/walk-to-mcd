@@ -1,16 +1,24 @@
 SHELL := /bin/bash
 
-.PHONY: all clean clean_output prepped_db
+.PHONY: all clean clean_output prepped_db maps
 
 .INTERMEDIATE: output/ output.tar.gz
 
 clean:
 	rm -Rf walk_to_mcd/etl/data/*.geojson
 
-prepped_db: database load_chicago load_starbucks
+prepped_db : database load_chicago load_starbucks
+
+maps : buffer_map not_buffer_map
 
 DB_NAME="walk-to-sb"
 USER="marceline"
+
+buffer_map :
+	psql -d $(DB_NAME) -c "select st_asgeojson(starbucks.area) from (select st_union(st_intersection(st_buffer(starbucks.geom, 2 * 1609.344),chicago.geom)) area from starbucks inner join chicago on st_intersects(starbucks.geom, chicago.geom)) starbucks;" > walk_to_mcd/etl/maps/buffer_map.geojson
+
+not_buffer_map :
+	psql -d $(DB_NAME) -c "select st_asgeojson(st_difference(chicago.area, starbucks.area)) not_buffer_map from (select st_union(st_intersection(st_buffer(starbucks.geom, 2 * 1609.344),chicago.geom)) area from starbucks inner join chicago on st_intersects(starbucks.geom, chicago.geom)) starbucks join (select chicago.geom area from chicago) chicago on 1=1;" > walk_to_mcd/etl/maps/not_buffer_map.geojson
 
 calculation:
 	psql -d $(DB_NAME) -c "select 100*(starbucks.area / chicago.area) percent_within_2mi_starbucks from (select st_area(st_union(st_intersection(st_buffer(starbucks.geom, 2 * 1609.344),chicago.geom))) area from starbucks inner join chicago on st_intersects(starbucks.geom, chicago.geom)) starbucks join (select st_area(chicago.geom) area from chicago) chicago on 1=1;"
