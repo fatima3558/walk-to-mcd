@@ -111,3 +111,5 @@ walk_to_mcd/static/compressor/*
 database
 load_chicago
 load_starbucks
+buffer_map
+not_buffer_map
