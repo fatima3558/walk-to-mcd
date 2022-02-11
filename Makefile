@@ -6,17 +6,18 @@ SHELL := /bin/bash
 
 clean:
 	rm -Rf walk_to_mcd/etl/data/*.geojson
+	rm -Rf walk_to_mcd/etl/data/maps/*.json
 
 prepped_db : database load_chicago load_starbucks
 
-maps : buffer_map not_buffer_map
+maps : buffer_map not_buffer_map map_files
 
 DB_NAME="walk-to-sb"
 USER="marceline"
 
 map_files : buffer_map not_buffer_map
-	ogr2ogr -f "GeoJSON" buffer_map.json PG:"host=localhost user=$(USER) dbname=$(DB_NAME)" "buffer_map"
-	ogr2ogr -f "GeoJSON" not_buffer_map.json PG:"host=localhost user=$(USER) dbname=$(DB_NAME)" "not_buffer_map"
+	ogr2ogr -f "GeoJSON" ./walk_to_mcd/etl/maps/buffer_map.json PG:"host=localhost user=$(USER) dbname=$(DB_NAME)" "buffer_map"
+	ogr2ogr -f "GeoJSON" ./walk_to_mcd/etl/maps/not_buffer_map.json PG:"host=localhost user=$(USER) dbname=$(DB_NAME)" "not_buffer_map"
 
 
 buffer_map :
