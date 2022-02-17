@@ -16,16 +16,15 @@ DB_NAME="walk-to-sb"
 USER="marceline"
 
 map_files : buffer_map not_buffer_map
-	ogr2ogr -f "GeoJSON" ./walk_to_mcd/etl/maps/buffer_map.json PG:"host=localhost user=$(USER) dbname=$(DB_NAME)" "buffer_map"
-	ogr2ogr -f "GeoJSON" ./walk_to_mcd/etl/maps/not_buffer_map.json PG:"host=localhost user=$(USER) dbname=$(DB_NAME)" "not_buffer_map"
-
+	ogr2ogr -t_srs EPSG:4326 -s_srs EPSG:26971 -f "GeoJSON" ./walk_to_mcd/etl/maps/buffer_map.json PG:"host=localhost user=$(USER) dbname=$(DB_NAME)" -sql "SELECT * FROM buffer_map"
+	ogr2ogr -t_srs EPSG:4326 -s_srs EPSG:26971 -f "GeoJSON" ./walk_to_mcd/etl/maps/not_buffer_map.json PG:"host=localhost user=$(USER) dbname=$(DB_NAME)" -sql "SELECT * FROM not_buffer_map"
 
 buffer_map :
-	psql -d $(DB_NAME) -c "create table buffer_map as select st_asgeojson(starbucks.area) from (select st_union(st_intersection(st_buffer(starbucks.geom, 2 * 1609.344),chicago.geom)) area from starbucks inner join chicago on st_intersects(starbucks.geom, chicago.geom)) starbucks;"
+	psql -d $(DB_NAME) -c "create table buffer_map as select starbucks.area from (select st_union(st_intersection(st_buffer(starbucks.geom, 2 * 1609.344),chicago.geom)) area from starbucks inner join chicago on st_intersects(starbucks.geom, chicago.geom)) starbucks;"
 	touch $@
 
 not_buffer_map :
-	psql -d $(DB_NAME) -c "create table not_buffer_map as select st_asgeojson(st_difference(chicago.area, starbucks.area)) not_buffer_map from (select st_union(st_intersection(st_buffer(starbucks.geom, 2 * 1609.344),chicago.geom)) area from starbucks inner join chicago on st_intersects(starbucks.geom, chicago.geom)) starbucks join (select chicago.geom area from chicago) chicago on 1=1;"
+	psql -d $(DB_NAME) -c "create table not_buffer_map as select st_difference(chicago.area, starbucks.area) not_buffer_map from (select st_union(st_intersection(st_buffer(starbucks.geom, 2 * 1609.344),chicago.geom)) area from starbucks inner join chicago on st_intersects(starbucks.geom, chicago.geom)) starbucks join (select chicago.geom area from chicago) chicago on 1=1;"
 	touch $@
 
 calculation:
